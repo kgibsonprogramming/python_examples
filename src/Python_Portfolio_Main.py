@@ -1,6 +1,6 @@
 ''' 
 Created on: 2021/1/2
-Last Updated: 2021/1/4
+Last Updated: 2021/1/5
 Various custom-coded data structures and algorithms
 
 @author: Kyle
@@ -41,7 +41,7 @@ def insertion_sort(random_numbers):
     
 def selection_sort(random_numbers):
     # Selection sort is another simple, efficient option for short lists
-    # While generally slower the insertion sort is favored over the selection,
+    # While generally the insertion sort is favored over the selection,
     # it can sort a list in no more than n swaps, making it a useful choice when
     # the swap operation is expensive. As an in-place sorting algorithm, it is also
     # conservative with memory use
@@ -55,6 +55,37 @@ def selection_sort(random_numbers):
         if minIdx != i:
             random_numbers[i], random_numbers[minIdx] = random_numbers[minIdx], random_numbers[i]
     return random_numbers
+
+def merge_sort(random_numbers):
+    # A stable, efficient, comparison-based sort developed by John von Neumann
+    # This example is a 'bottom-up' implementation of merge sort:
+    # The first pass sorts a sub-list of length 2, the second a sub-list of 4, etc.
+    # Note the additional memory overhead of merge sort, as it uses a second
+    # work arrayfor the sorting process
+    print("Entering merge sort...")
+    
+    work_array = [0 for _ in range(len(random_numbers))]
+    i = 1
+    while i < len(random_numbers):
+        print("i: " + str(range(1,len(random_numbers), i*2)))
+        j = 0
+        for j in range(0,len(random_numbers), j + (2 * i)):
+            do_merge(random_numbers, j, min(j + i, len(random_numbers)), min(j + 2 * i, len(random_numbers)), work_array)
+        # This copy prepares for the next iteration
+        random_numbers = work_array.copy()
+        i += i
+    return random_numbers
+
+def do_merge(a, iL, iR, iE, work_array):
+    i = iL
+    j = iR
+    for k in range(iL, iE):
+        if i < iR and (j >= iE or a[i] <= a[j]):
+            work_array[k] = a[i]
+            i += 1
+        else:
+            work_array[k] = a[j]
+            j += 1
     
 def validate(user_choice, sort_functions):
     is_valid = False
@@ -70,7 +101,7 @@ def main():
     r.seed(None)
     qty = 10
     
-    sort_functions = [bubble_sort, insertion_sort, selection_sort]
+    sort_functions = [bubble_sort, insertion_sort, selection_sort, merge_sort]
     print("Select a sort option:")
     for i in range(len(sort_functions)):
         print(str(i + 1) + ") " + sort_functions[i].__name__)
