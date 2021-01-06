@@ -7,6 +7,7 @@ Various custom-coded data structures and algorithms
 '''
 
 import random as r
+from math import floor
 
 def bubble_sort(random_numbers):
     # Bubble sort is highly inefficient and rarely used in practice
@@ -67,7 +68,6 @@ def merge_sort(random_numbers):
     work_array = [0 for _ in range(len(random_numbers))]
     i = 1
     while i < len(random_numbers):
-        print("i: " + str(range(1,len(random_numbers), i*2)))
         j = 0
         for j in range(0,len(random_numbers), j + (2 * i)):
             do_merge(random_numbers, j, min(j + i, len(random_numbers)), min(j + 2 * i, len(random_numbers)), work_array)
@@ -87,6 +87,54 @@ def do_merge(a, iL, iR, iE, work_array):
             work_array[k] = a[j]
             j += 1
     
+def heap_sort(random_numbers):
+    # Think of heap sort as an improved selection sort. It iterates to take the largest/smallest
+    # value and place it in the proper list position, making use of a heap data structure to
+    # do this efficiently. The result is an improvement from O(n) in the selection sort to
+    # O(n log n)
+    print("Entering heap sort...")
+    buildMaxHeap(random_numbers)
+    end = len(random_numbers) - 1
+    
+    while end > 0:
+        random_numbers[end], random_numbers[0] = random_numbers[0], random_numbers[end]
+        end -= 1
+        siftDown(random_numbers, 0, end)
+    return random_numbers
+
+def buildMaxHeap(random_numbers):
+    start = getIParent(len(random_numbers) - 1)
+    
+    while start >= 0:
+        siftDown(random_numbers, start, len(random_numbers) - 1)
+        start -= 1
+
+def siftDown(a, start, end):
+    root = start
+    
+    while getILeftChild(root) <= end:
+        child = getILeftChild(root)
+        swapIdx = root
+        
+        if a[swapIdx] < a[child]:
+            swapIdx = child
+        if (child + 1) <= end and a[swapIdx] < a[child + 1]:
+            swapIdx = child + 1
+        if swapIdx == root:
+            return
+        else:
+            a[swapIdx], a[root] = a[root], a[swapIdx]
+            root = swapIdx
+
+def getIParent(i):
+    return floor((i - 1) / 2)
+
+def getILeftChild(i):
+    return 2*i + 1
+
+def getIRightChild(i):
+    return 2*i + 2
+    
 def validate(user_choice, sort_functions):
     is_valid = False
     try:
@@ -101,7 +149,7 @@ def main():
     r.seed(None)
     qty = 10
     
-    sort_functions = [bubble_sort, insertion_sort, selection_sort, merge_sort]
+    sort_functions = [bubble_sort, insertion_sort, selection_sort, merge_sort, heap_sort]
     print("Select a sort option:")
     for i in range(len(sort_functions)):
         print(str(i + 1) + ") " + sort_functions[i].__name__)
