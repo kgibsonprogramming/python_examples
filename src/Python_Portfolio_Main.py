@@ -135,6 +135,36 @@ def getILeftChild(i):
 def getIRightChild(i):
     return 2*i + 2
     
+def quick_sort(random_numbers):
+    # Quick sort is a popular and efficient algorithm with an average time complexity of O(n log n)
+    # Since it can be done in-place, the efficiency of time and memory overhead makes it a popular choice.
+    # The caveat is the selection of the 'pivot', which is used to partition the list before sorting. Choosing
+    # the first or last item in a list will yield O(n^2) time complexity. Selecting the median is the optimal choice;
+    # since this can add a lot of overhead, random selection of the pivot is usually preferred and tends to yield the
+    # desired performance.
+    # This implementation uses the 'Lomuto partition scheme'; while there are cases where
+    # it underperforms vs. the 'Hoare partition scheme', it is a more compact algorithm
+    # and easier to understand
+    return quicksort(random_numbers, 0, len(random_numbers) - 1)
+
+def quicksort(random_numbers, lo, hi):    
+    if lo < hi:
+        p = partition(random_numbers, lo, hi)
+        quicksort(random_numbers, lo, p - 1)
+        quicksort(random_numbers, p + 1, hi)
+    return random_numbers
+
+
+def partition(a, lo, hi):
+    pivot = a[hi]
+    i = lo
+    for j in range(lo, hi):
+        if a[j] < pivot:
+            a[i], a[j] = a[j], a[i]
+            i += 1
+    a[i], a[hi] = a[hi], a[i]
+    return i    
+        
 def validate(user_choice, sort_functions):
     is_valid = False
     try:
@@ -149,7 +179,7 @@ def main():
     r.seed(None)
     qty = 10
     
-    sort_functions = [bubble_sort, insertion_sort, selection_sort, merge_sort, heap_sort]
+    sort_functions = [bubble_sort, insertion_sort, selection_sort, merge_sort, heap_sort, quick_sort]
     print("Select a sort option:")
     for i in range(len(sort_functions)):
         print(str(i + 1) + ") " + sort_functions[i].__name__)
