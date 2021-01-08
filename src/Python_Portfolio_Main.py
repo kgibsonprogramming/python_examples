@@ -1,6 +1,6 @@
 ''' 
 Created on: 2021/1/2
-Last Updated: 2021/1/5
+Last Updated: 2021/1/8
 Various custom-coded data structures and algorithms
 
 @author: Kyle
@@ -12,7 +12,6 @@ from math import floor
 def bubble_sort(random_numbers):
     # Bubble sort is highly inefficient and rarely used in practice
     # Its main utility is a simple introduction to sorting algorithms
-    print("Entering bubble sort...")
 
     do_sort = True
     while do_sort:
@@ -29,7 +28,6 @@ def insertion_sort(random_numbers):
     # Compared to selection sort - another simple sorting algorithm - insertion is
     # usually the preferred choice due to fewer comparisons and its performance when
     # data is already mostly sorted
-    print("Entering insertion sort...")
 
     i = 1
     while i < len(random_numbers):
@@ -46,7 +44,6 @@ def selection_sort(random_numbers):
     # it can sort a list in no more than n swaps, making it a useful choice when
     # the swap operation is expensive. As an in-place sorting algorithm, it is also
     # conservative with memory use
-    print("Entering selection sort...")
     
     for i in range(len(random_numbers)):
         minIdx = i
@@ -63,7 +60,6 @@ def merge_sort(random_numbers):
     # The first pass sorts a sub-list of length 2, the second a sub-list of 4, etc.
     # Note the additional memory overhead of merge sort, as it uses a second
     # work arrayfor the sorting process
-    print("Entering merge sort...")
     
     work_array = [0 for _ in range(len(random_numbers))]
     i = 1
@@ -92,7 +88,6 @@ def heap_sort(random_numbers):
     # value and place it in the proper list position, making use of a heap data structure to
     # do this efficiently. The result is an improvement from O(n) in the selection sort to
     # O(n log n)
-    print("Entering heap sort...")
     buildMaxHeap(random_numbers)
     end = len(random_numbers) - 1
     
@@ -145,6 +140,7 @@ def quick_sort(random_numbers):
     # This implementation uses the 'Lomuto partition scheme'; while there are cases where
     # it underperforms vs. the 'Hoare partition scheme', it is a more compact algorithm
     # and easier to understand
+
     return quicksort(random_numbers, 0, len(random_numbers) - 1)
 
 def quicksort(random_numbers, lo, hi):    
@@ -164,6 +160,33 @@ def partition(a, lo, hi):
             i += 1
     a[i], a[hi] = a[hi], a[i]
     return i    
+
+def shell_sort(random_numbers):
+    # Donald Shell's sorting algorithm can be seen as an optimization of
+    # insertion sort, allowing exchanges of items that are farther apart. 
+    # The effectiveness of this method depends on the gap sequence chosen -
+    # too few slows down each iteration, while too many increases overhead.
+    # At a minimum, the gap sequence always finishes with 1 - a regular insertion
+    # sort, guaranteeing a sorted list. Shell sort is not a stable sort.
+    # This basic implementation starts with a gap sequence containing '1' and
+    # adds additional gaps starting at len/2, reducing each successive gap by half
+    gaps = [1]
+    gap_size = floor(len(random_numbers)/2)
+    while gap_size > 2:
+        gaps.insert(-1, gap_size)
+        gap_size = floor(gap_size / 2)
+    print(gaps)    
+    
+    for gap in gaps:
+        for i in range (gap, len(random_numbers)):
+            temp = random_numbers[i]
+            j = i
+            while j >= gap and random_numbers[j-gap] > temp:
+                random_numbers[j] = random_numbers[j-gap]
+                j -= gap
+            random_numbers[j] = temp
+    
+    return random_numbers
         
 def validate(user_choice, sort_functions):
     is_valid = False
@@ -177,9 +200,9 @@ def validate(user_choice, sort_functions):
 
 def main():
     r.seed(None)
-    qty = 10
+    qty = 24
     
-    sort_functions = [bubble_sort, insertion_sort, selection_sort, merge_sort, heap_sort, quick_sort]
+    sort_functions = [bubble_sort, insertion_sort, selection_sort, merge_sort, heap_sort, quick_sort, shell_sort]
     print("Select a sort option:")
     for i in range(len(sort_functions)):
         print(str(i + 1) + ") " + sort_functions[i].__name__)
@@ -189,7 +212,7 @@ def main():
         random_numbers = r.sample(range(1,100), qty)
         print("Input: " + str(random_numbers))
         call_func = sort_functions[int(user_choice) - 1]
-        print("Func to call: " + str(call_func))
+        print(f"Entering {call_func.__name__}")
         print("Output: " + str(call_func(random_numbers)))
     else:
         print("Invalid input; exiting...")
